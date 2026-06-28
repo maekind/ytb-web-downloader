@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YTB Downloader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+
+    <header class="header">
+      <div class="logo">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <rect width="22" height="22" rx="5" fill="#FF2D2D"/>
+          <path d="M9 7.5L15.5 11L9 14.5V7.5Z" fill="white"/>
+        </svg>
+        <span>YTB Downloader</span>
+      </div>
+      <div id="status-dot" class="status-dot ready" title="Listo"></div>
+    </header>
+
+    <main class="input-section">
+      <div class="url-row">
+        <div class="url-field">
+          <svg class="url-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M6.5 9.5a3 3 0 0 0 4.243 0l2.121-2.12a3 3 0 0 0-4.243-4.244L7.5 4.257" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M9.5 6.5a3 3 0 0 0-4.243 0L3.136 8.621a3 3 0 0 0 4.243 4.243L8.5 11.743" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <input
+            type="url"
+            id="url-input"
+            placeholder="Pega la URL de YouTube aquí…"
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <button id="clear-btn" class="clear-btn" aria-label="Limpiar" hidden>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <button id="download-btn" class="download-btn" aria-label="Descargar">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M9 2v10M5 8l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 14h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <span>Descargar</span>
+        </button>
+      </div>
+
+      <!-- Video preview (shown after URL paste) -->
+      <div id="video-preview" class="video-preview" hidden>
+        <img id="preview-thumb" class="preview-thumb" src="" alt="" loading="lazy">
+        <div class="preview-info">
+          <span id="preview-title" class="preview-title"></span>
+          <span id="preview-meta" class="preview-meta"></span>
+        </div>
+        <div id="preview-loader" class="preview-loader" hidden>
+          <div class="spinner"></div>
+        </div>
+      </div>
+
+      <!-- Options -->
+      <div class="options-bar">
+        <div class="type-toggle">
+          <button class="type-btn active" data-type="video">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <rect x="1" y="2.5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.3"/>
+              <path d="M10 5.5l3-1.5v6l-3-1.5V5.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+            </svg>
+            Vídeo
+          </button>
+          <button class="type-btn" data-type="audio">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M5 10.5V3.5l7-1.5v7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="3.5" cy="10.5" r="1.5" stroke="currentColor" stroke-width="1.3"/>
+              <circle cx="10.5" cy="9" r="1.5" stroke="currentColor" stroke-width="1.3"/>
+            </svg>
+            Audio MP3
+          </button>
+        </div>
+
+        <div class="option-field">
+          <label class="option-label">Calidad</label>
+          <select id="quality-select" class="option-select"></select>
+        </div>
+      </div>
+    </main>
+
+    <section class="queue-section">
+      <div class="queue-header">
+        <h2 class="queue-title">Cola de descargas</h2>
+        <span id="queue-count" class="queue-count" hidden></span>
+        <button id="clear-completed-btn" class="clear-completed-btn" title="Borrar todo" hidden>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2 3.5h10M5.5 3.5V2.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v1M3 3.5l.7 7.5a1 1 0 0 0 1 .9h4.6a1 1 0 0 0 1-.9L11 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M5.5 6.5v3M8.5 6.5v3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+          Borrar todo
+        </button>
+      </div>
+      <div id="queue" class="queue">
+        <div class="empty-state" id="empty-state">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <rect x="6" y="10" width="28" height="22" rx="3" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M20 16v10M15 21l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <p>Las descargas aparecerán aquí</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Toast container -->
+  <div id="toasts" class="toasts"></div>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>
