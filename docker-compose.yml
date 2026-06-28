@@ -1,0 +1,41 @@
+services:
+  app:
+    build: .
+    ports:
+      - "${PORT:-3000}:3000"
+    volumes:
+      - downloads:/app/downloads
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - traefik_net
+    labels:
+      traefik.enable: true
+      traefik.http.routers.ytb-dl.entrypoints: websecure
+      traefik.http.routers.ytb-dl.rule: Host("ytb-dl.marcoespinosa.duckdns.org")
+      traefik.docker.network: traefik_net
+      traefik.http.services.ytb-dl.loadbalancer.server.port: 8090
+      traefik.http.routers.ytb-dl.tls: true
+      traefik.http.routers.ytb-dl.tls.certresolver: default
+      com.centurylinklabs.watchtower.enable: true
+      dashboard.stack.name: ytb-dl
+
+  cron:
+    image: alpine:3.20
+    volumes:
+      - downloads:/downloads
+      - ./docker/crontab:/etc/crontabs/root:ro
+    command: crond -f -l 8
+    restart: unless-stopped
+
+volumes:
+  downloads:
+
+networks:
+  traefik_net:
+    external:
+      name: traefik_net

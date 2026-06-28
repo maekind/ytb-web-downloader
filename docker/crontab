@@ -1,0 +1,2 @@
+# Delete files older than 24 h from the downloads volume, then prune empty dirs
+0 * * * * find /downloads -type f -mmin +1440 -delete && find /downloads -mindepth 1 -type d -empty -delete

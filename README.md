@@ -78,7 +78,3 @@ npm test            # run tests once
 npm run test:watch  # watch mode
 npm run test:coverage
 ```
-
-## License
-
-Proprietary — see [LICENSE](LICENSE).
