@@ -228,7 +228,7 @@ async function loadExistingJobs() {
     for (const job of jobs) {
       state.jobs.set(job.id, job);
       addJobCard(job);
-      if (job.status !== 'complete' && job.status !== 'error') connectSSE(job.id);
+      if (job.status !== 'complete' && job.status !== 'error' && job.status !== 'expired') connectSSE(job.id);
     }
     refreshStatusDot();
     updateClearBtn();
@@ -329,7 +329,7 @@ function updateJobCard(job) {
   const areaEl  = card.querySelector('.progress-area');
 
   if (areaEl) {
-    if (job.status === 'complete' || job.status === 'error') {
+    if (job.status === 'complete' || job.status === 'error' || job.status === 'expired') {
       areaEl.remove();
     } else {
       if (fillEl)  fillEl.style.width    = `${job.progress}%`;
@@ -348,7 +348,7 @@ function updateJobCard(job) {
 
 // ── HTML builders ─────────────────────────────────────────────────────────────
 function cardClass(status) {
-  return `job-card${status === 'complete' ? ' is-complete' : ''}${status === 'error' ? ' is-error' : ''}`;
+  return `job-card${status === 'complete' ? ' is-complete' : ''}${status === 'error' ? ' is-error' : ''}${status === 'expired' ? ' is-expired' : ''}`;
 }
 
 function badgeHTML(status) {
@@ -358,13 +358,14 @@ function badgeHTML(status) {
     processing:  ['⚙', 'Procesando'],
     complete:    ['✓', 'Listo'],
     error:       ['✕', 'Error'],
+    expired:     ['⌛', 'Expirado'],
   };
   const [icon, label] = map[status] || ['?', status];
   return `<span class="badge badge-${status}">${icon} ${label}</span>`;
 }
 
 function actionsHTML(job) {
-  if (job.status !== 'complete' && job.status !== 'error') return '';
+  if (job.status !== 'complete' && job.status !== 'error' && job.status !== 'expired') return '';
   const dlBtn = job.status === 'complete' ? `
     <button class="action-btn dl-btn" data-id="${job.id}" title="Descargar al dispositivo">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -382,7 +383,7 @@ function actionsHTML(job) {
 }
 
 function progressHTML(job) {
-  if (job.status === 'complete' || job.status === 'error') return '';
+  if (job.status === 'complete' || job.status === 'error' || job.status === 'expired') return '';
   const pct = job.progress || 0;
   return `
     <div class="progress-area">

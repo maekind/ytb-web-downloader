@@ -385,6 +385,7 @@ body {
 .job-card:hover { border-color: #363636; }
 .job-card.is-complete { border-color: rgba(34,197,94,0.2); }
 .job-card.is-error    { border-color: rgba(239,68,68,0.2); }
+.job-card.is-expired  { opacity: 0.5; }
 
 .job-top {
   display: flex;
@@ -463,6 +464,7 @@ body {
 .badge-processing  { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(234,179,8,0.2); }
 .badge-complete    { background: var(--green-dim);  color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
 .badge-error       { background: var(--red-dim);    color: var(--red);   border: 1px solid rgba(239,68,68,0.2); }
+.badge-expired     { background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border); }
 
 /* ── Progress Bar (signature element: video-editor playhead) ──────────────── */
 .progress-area { margin-top: 14px; }
