@@ -16,6 +16,7 @@ const state = {
   jobs: new Map(),
   infoTimer: null,
   lastFetchedUrl: null,
+  lastClipboardText: null,
 };
 
 const VIDEO_QUALITIES = [
@@ -60,6 +61,7 @@ function init() {
   bindEvents();
   loadExistingJobs();
   requestNotificationPermission();
+  bindClipboardWatch();
 }
 
 function bindEvents() {
@@ -464,6 +466,92 @@ function toast(msg, type = '') {
     el.style.transition = 'opacity 0.3s';
     setTimeout(() => el.remove(), 300);
   }, 4000);
+}
+
+// ── Clipboard watch ───────────────────────────────────────────────────────────
+let clipboardCheckAt = 0;
+let clipboardBlocked = false;
+
+function bindClipboardWatch() {
+  if (!navigator.clipboard?.readText) return;
+  window.addEventListener('focus', () => scheduleClipboardCheck(false));
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') scheduleClipboardCheck(false);
+  });
+  armClipboardGesture();
+}
+
+// El foco de ventana no cuenta como "gesto de usuario" en Chromium/Arc, así
+// que readText() se rechaza sin permiso previo. Un clic real sí sirve para
+// que el navegador muestre el prompt de permiso.
+function armClipboardGesture() {
+  document.addEventListener('pointerdown', () => scheduleClipboardCheck(true), { once: true });
+}
+
+function scheduleClipboardCheck(isUserGesture) {
+  const now = Date.now();
+  // 'focus' y 'visibilitychange' se disparan juntos en el mismo cambio de
+  // pestaña: sin este descarte se dispararían dos lecturas en paralelo,
+  // lo que a Chrome le parece un permiso "ignorado" y acaba bloqueándolo.
+  if (now - clipboardCheckAt < 500) return;
+  if (clipboardBlocked && !isUserGesture) return;
+  clipboardCheckAt = now;
+  checkClipboardForUrl();
+}
+
+async function checkClipboardForUrl() {
+  if (!document.hasFocus()) {
+    // Algo (p.ej. DevTools) robó el foco del documento; en cuanto la página
+    // lo recupere, reintentamos una vez.
+    window.addEventListener('focus', () => checkClipboardForUrl(), { once: true });
+    return;
+  }
+
+  let text;
+  try {
+    text = (await navigator.clipboard.readText()).trim();
+    clipboardBlocked = false;
+  } catch {
+    clipboardBlocked = true;
+    armClipboardGesture(); // reintentar solo tras el próximo clic real
+    return;
+  }
+
+  if (!text || text === state.lastClipboardText) return;
+  state.lastClipboardText = text;
+
+  const videoId = extractVideoId(text);
+  if (!videoId) return; // no es una URL de YouTube válida: no se toca nada
+  if (text === urlInput.value.trim()) return;
+
+  showClipboardPrompt(text, videoId);
+}
+
+function showClipboardPrompt(url, videoId) {
+  document.querySelector('.toast-clipboard')?.remove();
+
+  const el = document.createElement('div');
+  el.className = 'toast toast-clipboard';
+  el.innerHTML = `
+    <div class="toast-clipboard-row">
+      <img class="toast-clipboard-thumb" src="https://img.youtube.com/vi/${videoId}/default.jpg" alt="">
+      <span class="toast-clipboard-text">Has copiado un video de YouTube. ¿Quieres pegarlo?</span>
+    </div>
+    <div class="toast-clipboard-actions">
+      <button class="toast-btn toast-btn-primary" data-action="paste">Pegar</button>
+      <button class="toast-btn" data-action="dismiss">Descartar</button>
+    </div>
+  `;
+
+  el.querySelector('[data-action="paste"]').addEventListener('click', () => {
+    urlInput.value = url;
+    onUrlInput();
+    urlInput.focus();
+    el.remove();
+  });
+  el.querySelector('[data-action="dismiss"]').addEventListener('click', () => el.remove());
+
+  toastsEl.appendChild(el);
 }
 
 // ── Utils ─────────────────────────────────────────────────────────────────────
