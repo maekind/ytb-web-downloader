@@ -1,0 +1,3 @@
+networks:
+  traefik_net:
+    external: false

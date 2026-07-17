@@ -37,5 +37,5 @@ volumes:
 
 networks:
   traefik_net:
-    external:
-      name: traefik_net
+    name: traefik_net
+    external: true
