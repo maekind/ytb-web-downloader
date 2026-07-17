@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Política de Privacidad · YTB Downloader</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .legal-page {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px 48px;
+    }
+
+    .legal-header {
+      padding: 28px 0 32px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .legal-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .legal-back:hover { color: var(--accent); }
+
+    .legal-title {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .legal-date {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .legal-hero {
+      margin-bottom: 48px;
+    }
+
+    .legal-section {
+      margin-bottom: 40px;
+    }
+
+    .legal-section h2 {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .legal-section p {
+      font-size: 0.88rem;
+      color: var(--text-dim);
+      line-height: 1.75;
+      margin-bottom: 10px;
+    }
+
+    .legal-section ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .legal-section ul li {
+      font-size: 0.88rem;
+      color: var(--text-dim);
+      line-height: 1.65;
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .legal-section ul li::before {
+      content: '–';
+      position: absolute;
+      left: 0;
+      color: var(--text-muted);
+    }
+
+    .legal-section a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .legal-section a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="legal-page">
+
+    <header class="legal-header">
+      <a href="/" class="logo">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <rect width="22" height="22" rx="5" fill="#FF2D2D"/>
+          <path d="M9 7.5L15.5 11L9 14.5V7.5Z" fill="white"/>
+        </svg>
+        <span>YTB Downloader</span>
+      </a>
+      <a href="/" class="legal-back">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Volver
+      </a>
+    </header>
+
+    <div class="legal-hero">
+      <h1 class="legal-title">Política de Privacidad</h1>
+      <p class="legal-date">Última actualización: 28 de junio de 2026</p>
+    </div>
+
+    <article>
+
+      <div class="legal-section">
+        <h2>1. Información que Recopilamos</h2>
+        <p>YTB Downloader recopila la mínima información necesaria para funcionar:</p>
+        <ul>
+          <li>Identificador de dispositivo: un UUID aleatorio generado y guardado en <code style="font-family:var(--font-mono);font-size:0.82em">localStorage</code> para asociar tu cola de descargas con tu navegador</li>
+          <li>URLs de vídeo: las URLs de YouTube que envías para descargar, procesadas en tiempo real y no almacenadas de forma persistente</li>
+          <li>Datos técnicos básicos: información estándar de las peticiones HTTP (dirección IP, navegador) retenida temporalmente en logs del servidor</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <h2>2. Información que NO Recopilamos</h2>
+        <p>Para proteger tu privacidad, no recopilamos:</p>
+        <ul>
+          <li>Nombre, correo electrónico ni ningún dato personal identificable</li>
+          <li>Historial de descargas de forma persistente (los jobs se pierden al reiniciar el servidor)</li>
+          <li>Datos de cuentas de YouTube o Google</li>
+          <li>Información de geolocalización precisa</li>
+          <li>Cookies de seguimiento o publicidad</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <h2>3. Cómo Usamos tu Información</h2>
+        <p>La información recopilada se usa exclusivamente para:</p>
+        <ul>
+          <li>Mostrar tu cola de descargas en el navegador actual mediante el identificador de dispositivo</li>
+          <li>Procesar y entregar los archivos solicitados</li>
+          <li>Diagnosticar errores técnicos del servicio</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <h2>4. Almacenamiento y Seguridad</h2>
+        <ul>
+          <li>El identificador de dispositivo se guarda únicamente en el <code style="font-family:var(--font-mono);font-size:0.82em">localStorage</code> de tu navegador; no se envía a ninguna base de datos externa</li>
+          <li>Los archivos descargados se almacenan temporalmente en el servidor y se eliminan automáticamente pasadas 24 horas</li>
+          <li>Los jobs de descarga se guardan en memoria y desaparecen al reiniciar el servidor</li>
+          <li>Las comunicaciones entre el navegador y el servidor se realizan sobre HTTPS en producción</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <h2>5. Cookies y Almacenamiento Local</h2>
+        <p>Este servicio no utiliza cookies. Usamos <code style="font-family:var(--font-mono);font-size:0.82em">localStorage</code> exclusivamente para almacenar el identificador de dispositivo. Puedes eliminarlo en cualquier momento borrando los datos del sitio desde la configuración de tu navegador.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>6. Servicios de Terceros</h2>
+        <ul>
+          <li>Las descargas se realizan a través de <strong style="color:var(--text)">yt-dlp</strong>, una herramienta de código abierto; no compartimos tus datos con sus desarrolladores</li>
+          <li>El contenido descargado proviene de YouTube/Google, cuyas propias políticas de privacidad aplican</li>
+          <li>No utilizamos servicios de analítica de terceros ni redes publicitarias</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <h2>7. Derechos del Usuario</h2>
+        <p>Puedes en cualquier momento:</p>
+        <ul>
+          <li>Eliminar tu identificador de dispositivo borrando los datos del sitio en tu navegador</li>
+          <li>Solicitar información sobre los datos asociados a tu sesión contactando con nosotros</li>
+          <li>Utilizar el servicio de forma anónima, ya que no se requiere registro</li>
+        </ul>
+      </div>
+
+      <div class="legal-section">
+        <h2>8. Cambios en esta Política</h2>
+        <p>Podemos actualizar esta política ocasionalmente. Los cambios se publicarán en esta página con la fecha de actualización revisada.</p>
+      </div>
+
+      <div class="legal-section">
+        <h2>9. Contacto</h2>
+        <p>Si tienes preguntas sobre esta Política de Privacidad, puedes contactarnos en <a href="mailto:marco@marcoespinosa.com">marco@marcoespinosa.com</a>.</p>
+      </div>
+
+    </article>
+
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <svg width="18" height="18" viewBox="0 0 22 22" fill="none">
+            <rect width="22" height="22" rx="5" fill="#FF2D2D"/>
+            <path d="M9 7.5L15.5 11L9 14.5V7.5Z" fill="white"/>
+          </svg>
+          <span>YTB Downloader</span>
+        </div>
+        <p class="footer-tagline">Descarga vídeos y audio<br>de YouTube sin complicaciones.</p>
+      </div>
+      <div class="footer-col">
+        <h4 class="footer-heading">Legal</h4>
+        <nav class="footer-nav">
+          <a href="/terminos-de-uso" class="footer-link">Términos de uso</a>
+          <a href="/politica-privacidad" class="footer-link">Política de privacidad</a>
+        </nav>
+      </div>
+      <div class="footer-col footer-col--right">
+        <div class="footer-copy">
+          <span class="footer-copy-year">© 2026</span>
+          <span class="footer-copy-name">PentosLabs</span>
+          <img src="/pentoslabs.png" alt="PentosLabs" class="footer-pentos-logo">
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/consent.js"></script>
+</body>
+</html>

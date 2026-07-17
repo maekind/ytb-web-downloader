@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>YTB Downloader</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -116,9 +117,43 @@
 
   </div>
 
+  <footer class="footer">
+    <div class="footer-inner">
+
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <svg width="18" height="18" viewBox="0 0 22 22" fill="none">
+            <rect width="22" height="22" rx="5" fill="#FF2D2D"/>
+            <path d="M9 7.5L15.5 11L9 14.5V7.5Z" fill="white"/>
+          </svg>
+          <span>YTB Downloader</span>
+        </div>
+        <p class="footer-tagline">Descarga vídeos y audio<br>de YouTube sin complicaciones.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4 class="footer-heading">Legal</h4>
+        <nav class="footer-nav">
+          <a href="/terminos-de-uso" class="footer-link">Términos de uso</a>
+          <a href="/politica-privacidad" class="footer-link">Política de privacidad</a>
+        </nav>
+      </div>
+
+      <div class="footer-col footer-col--right">
+        <div class="footer-copy">
+          <span class="footer-copy-year">© 2026</span>
+          <span class="footer-copy-name">PentosLabs</span>
+          <img src="/pentoslabs.png" alt="PentosLabs" class="footer-pentos-logo">
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
   <!-- Toast container -->
   <div id="toasts" class="toasts"></div>
 
   <script src="app.js" type="module"></script>
+  <script src="consent.js"></script>
 </body>
 </html>
