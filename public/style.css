@@ -53,7 +53,7 @@ body {
 .app {
   max-width: 860px;
   margin: 0 auto;
-  padding: 0 24px 80px;
+  padding: 0 24px 48px;
 }
 
 /* ── Header ───────────────────────────────────────────────────────────────── */
@@ -385,6 +385,7 @@ body {
 .job-card:hover { border-color: #363636; }
 .job-card.is-complete { border-color: rgba(34,197,94,0.2); }
 .job-card.is-error    { border-color: rgba(239,68,68,0.2); }
+.job-card.is-expired  { opacity: 0.5; }
 
 .job-top {
   display: flex;
@@ -463,6 +464,7 @@ body {
 .badge-processing  { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(234,179,8,0.2); }
 .badge-complete    { background: var(--green-dim);  color: var(--green); border: 1px solid rgba(34,197,94,0.2); }
 .badge-error       { background: var(--red-dim);    color: var(--red);   border: 1px solid rgba(239,68,68,0.2); }
+.badge-expired     { background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border); }
 
 /* ── Progress Bar (signature element: video-editor playhead) ──────────────── */
 .progress-area { margin-top: 14px; }
@@ -558,6 +560,181 @@ body {
   padding: 6px 10px;
 }
 
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+.footer {
+  border-top: 1px solid var(--border);
+  margin-top: 60px;
+  padding: 40px 24px 32px;
+}
+
+.footer-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.footer-brand {}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.footer-tagline {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.footer-heading {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.footer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-link {
+  font-size: 0.83rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.footer-link:hover { color: var(--accent); }
+
+.footer-col--right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.footer-copy {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.83rem;
+  color: var(--text-muted);
+  position: relative;
+  padding-right: 64px;
+}
+
+.footer-copy-name {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.footer-pentos-logo {
+  position: absolute;
+  right: 28px;
+  bottom: -4px;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+@media (max-width: 600px) {
+  .footer-inner {
+    grid-template-columns: 1fr;
+  }
+  .footer-col--right {
+    justify-content: flex-start;
+  }
+}
+
+/* ── Cookie / Storage consent banner ─────────────────────────────────────── */
+.consent-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  z-index: 200;
+  animation: slide-up 0.3s var(--ease-out);
+}
+
+.consent-banner--hiding {
+  animation: slide-down-out 0.25s var(--ease-out) forwards;
+}
+
+.consent-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.consent-body {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.consent-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.consent-text {
+  font-size: 0.83rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.consent-text strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.consent-link {
+  color: var(--accent);
+  text-decoration: none;
+  margin-left: 6px;
+  white-space: nowrap;
+}
+.consent-link:hover { text-decoration: underline; }
+
+.consent-close {
+  flex-shrink: 0;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  transition: background 0.15s, color 0.15s;
+}
+.consent-close:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+@keyframes slide-down-out {
+  from { transform: translateY(0); opacity: 1; }
+  to   { transform: translateY(100%); opacity: 0; }
+}
+
 /* ── Toasts ───────────────────────────────────────────────────────────────── */
 .toasts {
   position: fixed;
@@ -582,6 +759,52 @@ body {
 }
 .toast.error   { border-color: rgba(239,68,68,0.4); color: var(--red); }
 .toast.success { border-color: rgba(34,197,94,0.4); color: var(--green); }
+
+.toast-clipboard {
+  max-width: 280px;
+}
+.toast-clipboard-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.toast-clipboard-thumb {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.toast-clipboard-text {
+  line-height: 1.3;
+}
+.toast-clipboard-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.toast-btn {
+  flex: 1;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.8rem;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.toast-btn:hover {
+  background: var(--surface-3, rgba(255,255,255,0.06));
+}
+.toast-btn-primary {
+  background: #b91c1c;
+  border-color: transparent;
+  color: #fff;
+}
+.toast-btn-primary:hover {
+  filter: brightness(1.15);
+}
 
 /* ── Spinner ──────────────────────────────────────────────────────────────── */
 .spinner {

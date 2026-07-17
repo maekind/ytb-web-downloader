@@ -12,7 +12,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const app = express();
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../public'), { extensions: ['html'] }));
 
 // In-memory job store
 export const jobs = new Map();
@@ -95,9 +95,13 @@ app.get('/api/progress/:id', (req, res) => {
 
 app.get('/api/jobs', (req, res) => {
   const did = getDeviceId(req);
+  const now = Date.now();
   const list = [...jobs.values()]
     .filter((j) => j.deviceId === did)
-    .map(toPublic)
+    .map((j) => {
+      if (j.status === 'complete' && j.expiresAt && now > j.expiresAt) j.status = 'expired';
+      return toPublic(j);
+    })
     .sort((a, b) => b.createdAt - a.createdAt);
   res.json(list);
 });
@@ -108,7 +112,10 @@ app.get('/api/download/:id', (req, res) => {
     return res.status(404).json({ error: 'File not available' });
   }
   const abs = path.resolve(job.filePath);
-  if (!existsSync(abs)) return res.status(404).json({ error: 'File not found on disk' });
+  if (!existsSync(abs)) {
+    job.status = 'expired';
+    return res.status(410).json({ error: 'File expired' });
+  }
 
   const filename = path.basename(abs);
   const ext = path.extname(abs).toLowerCase();
@@ -189,11 +196,12 @@ export async function startDownload(job) {
     const fn = job.type === 'audio' ? downloadAudio : downloadVideo;
     const result = await fn(job.url, { quality: job.quality, outputDir: job.outputDir, onLine });
 
-    job.filePath = result?.filePath ?? null;
-    job.status   = 'complete';
-    job.progress = 100;
-    job.eta      = null;
-    job.speed    = null;
+    job.filePath  = result?.filePath ?? null;
+    job.status    = 'complete';
+    job.progress  = 100;
+    job.eta       = null;
+    job.speed     = null;
+    job.expiresAt = Date.now() + 24 * 60 * 60 * 1000;
     broadcast(job);
   } catch (err) {
     job.status = 'error';
