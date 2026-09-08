@@ -678,6 +678,27 @@ body {
   }
 }
 
+@media (max-width: 480px) {
+  .download-btn {
+    flex-shrink: 0;
+    width: 48px;
+    padding: 0;
+    justify-content: center;
+  }
+  .download-btn span {
+    display: none;
+  }
+
+  .job-top {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+  .job-right {
+    flex-basis: 100%;
+    justify-content: flex-end;
+  }
+}
+
 /* ── Cookie / Storage consent banner ─────────────────────────────────────── */
 .consent-banner {
   position: fixed;
