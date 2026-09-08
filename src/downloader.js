@@ -1,12 +1,52 @@
 import { spawn } from 'child_process';
 import { mkdirSync, existsSync } from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { parseProgress, parseFilePath } from './parse.js';
 
 const spawnEnv = {
   ...process.env,
   PATH: `/opt/homebrew/bin:/usr/local/bin:${process.env.PATH || '/usr/bin:/bin'}`,
 };
+
+const UPDATE_SCRIPT = path.join(path.dirname(fileURLToPath(import.meta.url)), '../scripts/update-yt-dlp.sh');
+const UPDATE_COOLDOWN_MS = 5 * 60 * 1000;
+
+let updatePromise = null;
+let lastUpdateAt = 0;
+
+// Runs the yt-dlp updater, deduped so concurrent failures share one run and
+// throttled so a burst of unrelated errors (e.g. bad URLs) can't hammer
+// pip/brew. Resolves false (without attempting an update) inside the cooldown.
+export function updateYtDlp() {
+  if (updatePromise) return updatePromise;
+  if (Date.now() - lastUpdateAt < UPDATE_COOLDOWN_MS) return Promise.resolve(false);
+
+  updatePromise = new Promise((resolve) => {
+    const proc = spawn('sh', [UPDATE_SCRIPT], { env: spawnEnv });
+    proc.on('close', (code) => {
+      lastUpdateAt = Date.now();
+      updatePromise = null;
+      resolve(code === 0);
+    });
+    proc.on('error', () => {
+      updatePromise = null;
+      resolve(false);
+    });
+  });
+  return updatePromise;
+}
+
+// Retries a failed yt-dlp call once after attempting a self-update — recovers
+// from the common case where YouTube changes have broken an outdated binary.
+async function withUpdateRetry(task) {
+  try {
+    return await task();
+  } catch (err) {
+    if (!(await updateYtDlp())) throw err;
+    return task();
+  }
+}
 
 export const VIDEO_QUALITIES = [
   { label: '4K (2160p)', value: '2160' },
@@ -26,6 +66,10 @@ export const AUDIO_QUALITIES = [
 ];
 
 export async function getVideoInfo(url) {
+  return withUpdateRetry(() => fetchVideoInfo(url));
+}
+
+function fetchVideoInfo(url) {
   return new Promise((resolve, reject) => {
     const proc = spawn('yt-dlp', ['--dump-json', '--no-playlist', url], { env: spawnEnv });
     let raw = '';
@@ -69,7 +113,7 @@ export function downloadVideo(url, options = {}) {
     '--newline',
   ];
 
-  return runProcess(args, onProgress, onLine);
+  return withUpdateRetry(() => runProcess(args, onProgress, onLine));
 }
 
 export function downloadAudio(url, options = {}) {
@@ -88,18 +132,20 @@ export function downloadAudio(url, options = {}) {
     '--newline',
   ];
 
-  return runProcess(args, onProgress, onLine);
+  return withUpdateRetry(() => runProcess(args, onProgress, onLine));
 }
 
 function runProcess(args, onProgress, onLine) {
   return new Promise((resolve, reject) => {
     const proc = spawn('yt-dlp', args, { env: spawnEnv });
     let filePath = null;
+    let lastError = '';
 
     const handleLine = (line) => {
       const trimmed = line.trim();
       if (!trimmed) return;
       if (onLine) onLine(trimmed);
+      if (/^ERROR:/.test(trimmed)) lastError = trimmed;
 
       const parsed = parseProgress(trimmed);
       if (parsed && onProgress) onProgress(parsed.progress);
@@ -113,7 +159,7 @@ function runProcess(args, onProgress, onLine) {
 
     proc.on('close', (code) => {
       if (code === 0) resolve({ filePath });
-      else reject(new Error(`yt-dlp exited with code ${code}`));
+      else reject(new Error(lastError || `yt-dlp exited with code ${code}`));
     });
 
     proc.on('error', reject);
