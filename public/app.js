@@ -220,7 +220,16 @@ function connectSSE(id) {
     }
   };
 
-  es.onerror = () => es.close();
+  es.onerror = () => {
+    es.close();
+    const job = state.jobs.get(id);
+    if (!job || job.status === 'complete' || job.status === 'error' || job.status === 'expired') return;
+    job.status = 'error';
+    job.error = 'Se perdió la conexión con el servidor';
+    state.jobs.set(id, job);
+    updateJobCard(job);
+    refreshStatusDot();
+  };
 }
 
 async function loadExistingJobs() {
