@@ -4,15 +4,19 @@ import { Command } from 'commander';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
 import cliProgress from 'cli-progress';
+import { createRequire } from 'module';
 import { checkDependencies, getVersions } from './checker.js';
 import { downloadVideo, downloadAudio, getVideoInfo, VIDEO_QUALITIES, AUDIO_QUALITIES } from './downloader.js';
+
+const require = createRequire(import.meta.url);
+const { version } = require('../package.json');
 
 const program = new Command();
 
 program
   .name('ytb')
   .description('YouTube video and audio downloader')
-  .version('1.0.0')
+  .version(version)
   .argument('[url]', 'YouTube URL to download')
   .option('-t, --type <type>', 'Download type: video | audio', 'video')
   .option('-q, --quality <quality>', 'Quality (e.g. 1080 for video, 192 for audio)')

@@ -10,7 +10,8 @@
     "dev": "node --watch src/server.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "version:bump": "bash scripts/bump-version.sh"
   },
   "dependencies": {
     "chalk": "^5.3.0",
