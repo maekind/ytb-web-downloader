@@ -1,8 +1,9 @@
+version: '3.1'
 services:
   app:
     build: .
     ports:
-      - "${PORT:-3000}:3000"
+      - "3000:3000"
     volumes:
       - downloads:/app/downloads
     restart: unless-stopped
@@ -16,13 +17,12 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.ytb-dl.entrypoints: websecure
-      traefik.http.routers.ytb-dl.rule: Host("ytb-dl.marcoespinosa.duckdns.org")
+      traefik.http.routers.ytb-dl.rule: Host("ytb-dl.marcoespinosa.com")
       traefik.docker.network: traefik_net
-      traefik.http.services.ytb-dl.loadbalancer.server.port: 8090
+      traefik.http.services.ytb-dl.loadbalancer.server.port: 3000
       traefik.http.routers.ytb-dl.tls: true
       traefik.http.routers.ytb-dl.tls.certresolver: default
-      com.centurylinklabs.watchtower.enable: true
-      dashboard.stack.name: ytb-dl
+      dashboard.stack.name: youtube-web-downloader
 
   cron:
     image: alpine:3.20
@@ -37,5 +37,4 @@ volumes:
 
 networks:
   traefik_net:
-    name: traefik_net
     external: true
