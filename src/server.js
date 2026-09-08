@@ -4,9 +4,13 @@ import path from 'path';
 import { randomUUID } from 'crypto';
 import { createReadStream, existsSync, statSync } from 'fs';
 import { exec } from 'child_process';
+import { createRequire } from 'module';
 import { downloadVideo, downloadAudio, getVideoInfo } from './downloader.js';
 import { checkDependencies } from './checker.js';
 import { parseProgress, isProcessingLine } from './parse.js';
+
+const require = createRequire(import.meta.url);
+const { version } = require('../package.json');
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const app = express();
@@ -36,6 +40,10 @@ function broadcast(job) {
 }
 
 // ─── Routes ──────────────────────────────────────────────────────────────────
+
+app.get('/api/version', (req, res) => {
+  res.json({ version });
+});
 
 app.post('/api/info', async (req, res) => {
   const { url } = req.body;

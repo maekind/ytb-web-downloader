@@ -647,6 +647,20 @@ body {
   object-fit: contain;
 }
 
+.footer-version {
+  font-family: 'SF Mono', 'Menlo', monospace;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.footer-version:empty { display: none; }
+
+.footer-version::before {
+  content: '·';
+  margin-right: 6px;
+}
+
 @media (max-width: 600px) {
   .footer-inner {
     grid-template-columns: 1fr;

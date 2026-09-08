@@ -54,6 +54,7 @@ const previewMeta       = $('preview-meta');
 const previewLoader     = $('preview-loader');
 const toastsEl          = $('toasts');
 const typeBtns          = document.querySelectorAll('.type-btn');
+const footerVersion     = $('footer-version');
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 function init() {
@@ -62,6 +63,17 @@ function init() {
   loadExistingJobs();
   requestNotificationPermission();
   bindClipboardWatch();
+  loadVersion();
+}
+
+async function loadVersion() {
+  try {
+    const res = await apiFetch('/api/version');
+    const { version } = await res.json();
+    if (footerVersion && version) footerVersion.textContent = `v${version}`;
+  } catch {
+    // non-critical
+  }
 }
 
 function bindEvents() {
