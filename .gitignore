@@ -6,3 +6,4 @@ downloads/
 *.m4a
 .DS_Store
 .claude/
+.env.deploy
