@@ -656,6 +656,8 @@ body {
   max-width: 860px;
   margin: 0 auto;
   padding: 14px 24px;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .footer-version {
