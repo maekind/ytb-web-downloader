@@ -108,7 +108,7 @@ export function downloadVideo(url, options = {}) {
     '--no-playlist',
     '-f', `bestvideo[height<=${quality}][ext=mp4]+bestaudio[ext=m4a]/bestvideo[height<=${quality}]+bestaudio/best[height<=${quality}]`,
     '--merge-output-format', 'mp4',
-    '-o', path.join(outputDir, '%(title)s.%(ext)s'),
+    '-o', path.join(outputDir, `%(title)s [${quality}p].%(ext)s`),
     '--progress',
     '--newline',
   ];
@@ -127,7 +127,7 @@ export function downloadAudio(url, options = {}) {
     '-x',
     '--audio-format', 'mp3',
     '--audio-quality', `${quality}K`,
-    '-o', path.join(outputDir, '%(title)s.%(ext)s'),
+    '-o', path.join(outputDir, `%(title)s [${quality}kbps].%(ext)s`),
     '--progress',
     '--newline',
   ];
