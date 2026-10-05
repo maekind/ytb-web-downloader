@@ -136,6 +136,20 @@ app.get('/api/download/:id', (req, res) => {
   createReadStream(abs).pipe(res);
 });
 
+// Inline streaming with HTTP Range support (sendFile handles Range/206 and MIME)
+app.get('/api/stream/:id', (req, res) => {
+  const job = jobs.get(req.params.id);
+  if (!job || job.status !== 'complete' || !job.filePath) {
+    return res.status(404).json({ error: 'File not available' });
+  }
+  const abs = path.resolve(job.filePath);
+  if (!existsSync(abs)) {
+    job.status = 'expired';
+    return res.status(410).json({ error: 'File expired' });
+  }
+  res.sendFile(abs, { acceptRanges: true, headers: { 'Cache-Control': 'no-store' } });
+});
+
 // Remove a single finished job from the queue
 app.delete('/api/jobs/:id', (req, res) => {
   const job = jobs.get(req.params.id);

@@ -389,13 +389,19 @@ function badgeHTML(status) {
 
 function actionsHTML(job) {
   if (job.status !== 'complete' && job.status !== 'error' && job.status !== 'expired') return '';
-  const dlBtn = job.status === 'complete' ? `
+  const playBtn = job.status === 'complete' ? `
+    <button class="action-btn play-btn" data-id="${job.id}" title="Reproducir">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+        <path d="M4 2.5v9a.5.5 0 0 0 .76.43l7.2-4.5a.5.5 0 0 0 0-.86l-7.2-4.5A.5.5 0 0 0 4 2.5z"/>
+      </svg>
+    </button>` : '';
+  const dlBtn = playBtn + (job.status === 'complete' ? `
     <button class="action-btn dl-btn" data-id="${job.id}" title="Descargar al dispositivo">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
         <path d="M7 2v7M4 6.5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M2 11h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
       </svg>
-    </button>` : '';
+    </button>` : '');
   return dlBtn + `
     <button class="action-btn trash-btn" data-id="${job.id}" title="Eliminar de la cola">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -426,7 +432,47 @@ function progressHTML(job) {
 
 function bindCardActions(card, job) {
   card.querySelector('.dl-btn')?.addEventListener('click', () => downloadFile(job.id));
+  card.querySelector('.play-btn')?.addEventListener('click', () => openPlayer(job));
   card.querySelector('.trash-btn')?.addEventListener('click', () => removeJob(job.id));
+}
+
+// ── Player modal ──────────────────────────────────────────────────────────────
+function openPlayer(job) {
+  closePlayer();
+  const tag = job.type === 'audio' ? 'audio' : 'video';
+  const modal = document.createElement('div');
+  modal.id = 'player-modal';
+  modal.className = 'player-modal';
+  modal.innerHTML = `
+    <div class="player-dialog" role="dialog" aria-modal="true">
+      <div class="player-header">
+        <span class="player-title">${esc(job.title || '')}</span>
+        <button class="action-btn player-close" title="Cerrar">✕</button>
+      </div>
+      <${tag} class="player-media" src="/api/stream/${job.id}" controls autoplay playsinline></${tag}>
+    </div>`;
+  modal.addEventListener('click', (e) => { if (e.target === modal) closePlayer(); });
+  modal.querySelector('.player-close').addEventListener('click', closePlayer);
+  modal.querySelector('.player-media').addEventListener('error', () => {
+    toast('No se pudo reproducir el archivo', 'error');
+  });
+  document.addEventListener('keydown', onPlayerKey);
+  document.body.appendChild(modal);
+}
+
+function closePlayer() {
+  const modal = document.getElementById('player-modal');
+  if (!modal) return;
+  const media = modal.querySelector('.player-media');
+  media.pause();
+  media.removeAttribute('src');
+  media.load();
+  modal.remove();
+  document.removeEventListener('keydown', onPlayerKey);
+}
+
+function onPlayerKey(e) {
+  if (e.key === 'Escape') closePlayer();
 }
 
 // ── File download ─────────────────────────────────────────────────────────────

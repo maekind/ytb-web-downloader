@@ -1,0 +1,6 @@
+FROM alpine:3.20
+
+COPY docker/crontab /etc/crontabs/root
+RUN chmod 600 /etc/crontabs/root
+
+CMD ["crond", "-f", "-l", "8", "-L", "/dev/stdout"]
