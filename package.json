@@ -1,6 +1,6 @@
 {
   "name": "ytb-downloader",
-  "version": "1.5.1788887870",
+  "version": "1.6.1791205503",
   "description": "YouTube video and audio downloader",
   "type": "module",
   "main": "src/index.js",
