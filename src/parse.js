@@ -26,6 +26,10 @@ export function parseFilePath(line) {
   m = line.match(/^\[ExtractAudio\] Destination: (.+)$/);
   if (m) return m[1].trim();
 
+  // Final file already exists (same title + quality): yt-dlp skips the download
+  m = line.match(/^\[download\] (.+) has already been downloaded$/);
+  if (m) return m[1].trim();
+
   return null;
 }
 

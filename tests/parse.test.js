@@ -21,6 +21,11 @@ describe('parseProgress', () => {
     expect(result.eta).toBeNull();
   });
 
+  it('extracts path from already-downloaded line', () => {
+    const line = '[download] /tmp/My Video [1080p].mp4 has already been downloaded';
+    expect(parseFilePath(line)).toBe('/tmp/My Video [1080p].mp4');
+  });
+
   it('returns null for non-progress lines', () => {
     expect(parseProgress('[youtube] Extracting URL: ...')).toBeNull();
     expect(parseProgress('[Merger] Merging formats into "file.mp4"')).toBeNull();
