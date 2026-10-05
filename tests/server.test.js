@@ -311,3 +311,59 @@ describe('GET /api/download/:id', () => {
     expect(Number(res.headers['content-length'])).toBe('fake-mp3-bytes'.length);
   });
 });
+
+// ─── GET /api/stream/:id ──────────────────────────────────────────────────────
+
+describe('GET /api/stream/:id', () => {
+  async function completedJobId() {
+    const postRes = await request(app)
+      .post('/api/download')
+      .set('X-Device-ID', 'device-1')
+      .send({ url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', type: 'audio' });
+    await new Promise((r) => setTimeout(r, 50));
+    return postRes.body.id;
+  }
+
+  it('returns 404 for an unknown job', async () => {
+    const res = await request(app).get('/api/stream/nonexistent-id');
+    expect(res.status).toBe(404);
+  });
+
+  it('returns 404 if job is not yet complete', async () => {
+    const postRes = await request(app)
+      .post('/api/download')
+      .set('X-Device-ID', 'device-1')
+      .send({ url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', type: 'audio' });
+    jobs.get(postRes.body.id).status = 'downloading';
+
+    const res = await request(app).get(`/api/stream/${postRes.body.id}`);
+    expect(res.status).toBe(404);
+  });
+
+  it('serves the file inline (no attachment) when complete', async () => {
+    const id = await completedJobId();
+    const res = await request(app).get(`/api/stream/${id}`);
+
+    expect(res.status).toBe(200);
+    expect(res.headers['content-type']).toMatch(/audio\/mpeg/);
+    expect(res.headers['content-disposition']).toBeUndefined();
+    expect(res.headers['accept-ranges']).toBe('bytes');
+  });
+
+  it('supports Range requests with 206', async () => {
+    const id = await completedJobId();
+    const res = await request(app).get(`/api/stream/${id}`).set('Range', 'bytes=0-3');
+
+    expect(res.status).toBe(206);
+    expect(res.headers['content-range']).toMatch(/^bytes 0-3\//);
+  });
+
+  it('returns 410 and marks the job expired if the file is gone', async () => {
+    const id = await completedJobId();
+    jobs.get(id).filePath = '/nonexistent/file.mp3';
+
+    const res = await request(app).get(`/api/stream/${id}`);
+    expect(res.status).toBe(410);
+    expect(jobs.get(id).status).toBe('expired');
+  });
+});
